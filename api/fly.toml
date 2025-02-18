@@ -1,0 +1,24 @@
+app = "finanzaspersonales-mysql"
+kill_signal = "SIGINT"
+kill_timeout = 5
+primary_region = "mad"
+
+[env]
+  MYSQL_ROOT_PASSWORD = "792769"
+  MYSQL_DATABASE = "finanzaspersonales"
+  MYSQL_PASSWORD = "792769"
+
+[experimental]
+  # Sobrescribe el comando para forzar a MySQL a escuchar en todas las interfaces
+  cmd = [
+    "--default-authentication-plugin=mysql_native_password",
+    "--bind-address=0.0.0.0"
+  ]
+
+[[services]]
+  internal_port = 3306
+  protocol = "tcp"
+  image = "mysql:8.0"
+  [[services.ports]]
+    port = 3307  # Puerto público para MySQL
+    handlers = ["tls"]

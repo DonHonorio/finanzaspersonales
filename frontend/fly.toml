@@ -1,0 +1,16 @@
+app = "finanzaspersonales-frontend"
+kill_signal = "SIGINT"
+kill_timeout = 5
+primary_region = "mad"
+
+[env]
+  # La API se comunica mediante el hostname interno de Fly, que en este caso es "finanzaspersonales-api.internal"
+  NEXT_PUBLIC_API_URL = "https://finanzaspersonales-api.internal:7082"
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+  image = "registry.fly.io/finanzaspersonales-frontend:latest"
+  [[services.ports]]
+    port = 3001  # Puerto público para el Frontend
+    handlers = ["http"]

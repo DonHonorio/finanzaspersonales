@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 792769
+      MYSQL_DATABASE: finanzaspersonales
+      MYSQL_PASSWORD: 792769
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+
+  api:
+    # command: dotnet watch run
+    build: ./api
+    container_name: api
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      # Usa el nombre del servicio "mysql" para resolver la conexión interna
+      ConnectionStrings__DefaultConnection: "server=mysql;port=3306;database=finanzaspersonales;user=root;password=792769"
+      # ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_ENVIRONMENT: "Production"
+    ports:
+      # - "7082:7082" # DESARROLLO
+      - "7082:8080" # PRODUCCIÓN
+    # volumes:
+    #   - ./api:/app   # Asegúrate de ajustar la ruta según tu estructura
+    networks:
+      - app-network
+
+  frontend:
+    command: npm run dev
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: "http://localhost:7082"
+    container_name: frontend
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "3001:3000"
+    # volumes:
+    #   - ./frontend:/app   # Monta el código local en /app dentro del contenedor
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge

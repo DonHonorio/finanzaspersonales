@@ -1,0 +1,20 @@
+app = "finanzaspersonales-mysql"
+kill_signal = "SIGINT"
+kill_timeout = 5
+primary_region = "mad"
+
+[build]
+  # En lugar de un Dockerfile, usamos la imagen oficial de MySQL
+  image = "mysql:8.0"
+
+[env]
+  MYSQL_ROOT_PASSWORD = "792769"
+  MYSQL_DATABASE = "finanzaspersonales"
+  MYSQL_PASSWORD = "792769"
+
+[[services]]
+  internal_port = 3306
+  protocol = "tcp"
+  [[services.ports]]
+    port = 3307  # Puerto público para MySQL
+    handlers = ["tls"]
